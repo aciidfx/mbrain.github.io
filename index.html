@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Work Brain">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Work Brain</title>
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--bd2:#cbd5e1;--teal:#0f766e;--tealbg:#f0fdfa;--bg:#f8fafc;--card:#fff;--hdr:#fffe;--tx:#334155;--red:#dc2626;--warnbg:#fffbeb;--warntx:#78350f;--redbg:#fef2f2;--redtx:#7f1d1d;--outtx:#134e4a;--ic:#0f172a}
+html[data-theme=dark]{color-scheme:dark;--ink:#f1f5f9;--mut:#94a3b8;--line:#263244;--bd2:#475569;--teal:#0d9488;--tealbg:#0f2f2f;--bg:#0b1220;--card:#111a2b;--hdr:#111a2bee;--tx:#cbd5e1;--warnbg:#3a2a0a;--warntx:#fcd34d;--redbg:#3b1212;--redtx:#fca5a5;--outtx:#99f6e4;--ic:#1e293b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:.9375rem/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3,p{margin:0}h1{font-size:1.5rem;color:var(--ink)}h2{font-size:1.125rem;color:var(--ink)}h3{font-size:.9375rem;color:var(--ink)}
+button{font:inherit;cursor:pointer;color:inherit}
+svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+header{position:sticky;top:0;z-index:5;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hin{max-width:1000px;margin:auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.brand{display:flex;gap:10px;align-items:center;background:none;border:0;padding:0;font-weight:600;color:var(--ink)}
+.logo{background:var(--teal);color:#fff;border-radius:10px;padding:7px;display:flex}
+.sw{position:relative;margin-left:auto;flex:1 1 220px;max-width:340px}
+input,textarea,select{font:inherit;width:100%;border:1px solid var(--bd2);border-radius:8px;padding:8px 10px;background:var(--card);color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid #0f766e33;border-color:var(--teal)}
+#res{position:absolute;top:44px;right:0;width:min(26rem,calc(100vw - 32px));max-height:320px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px #0002;padding:6px;display:none}
+#res button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:8px 10px}
+#res button:hover{background:var(--bg)}
+small,.mut{color:var(--mut);font-size:.75rem}
+main{max-width:1000px;margin:auto;padding:24px 16px 90px}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{background:#115e59}.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--bd2)}.btn.ghost:hover{background:var(--bg)}
+.btn.red{background:var(--red)}.btn.sm{padding:6px 10px;font-size:13px}.btn.danger{background:var(--card);color:var(--red);border:1px solid var(--bd2)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.end{justify-content:flex-end}
+.bar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px}
+.seg button{border:0;background:none;border-radius:6px;padding:5px 12px;font-weight:500;color:var(--mut)}.seg .on{background:var(--teal);color:#fff}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.card:hover{border-color:#0f766e88;box-shadow:0 4px 14px #0001}
+.cm{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:14px 48px 14px 14px}
+.tile{width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--c,var(--teal)) 14%,var(--card));color:var(--c,var(--teal));display:flex;align-items:center;justify-content:center;flex:none}
+.x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:0;background:none;color:#94a3b8;display:flex;align-items:center;justify-content:center}
+.x:hover{background:var(--redbg);color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:14px;font-size:14px}
+.crumbs button{background:none;border:0;padding:0;color:var(--mut)}.crumbs button:hover{color:var(--teal)}.crumbs .cur{color:var(--ink);font-weight:600}
+section{margin-top:32px}.empty{border:1px dashed var(--bd2);border-radius:16px;padding:28px;text-align:center;color:var(--mut)}
+.warn{background:var(--warnbg);color:var(--warntx);border-radius:12px;padding:12px 14px;font-size:12px;margin:10px 0 14px}
+.note{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px}
+.out{background:var(--tealbg);color:var(--outtx);border-radius:12px;padding:10px 12px;margin-top:10px;white-space:pre-wrap}
+label{display:block;font-weight:500;font-size:14px;margin-bottom:12px}label input,label textarea,label select{margin-top:4px;font-weight:400}
+.pre{white-space:pre-wrap}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.th{position:relative;width:96px;height:96px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--bg);padding:0;display:block}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+button.th{cursor:zoom-in}
+.th .rm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:#0f172acc;color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+.th.add{border:1px dashed #94a3b8;color:var(--mut);font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.th.add:hover{border-color:var(--teal);color:var(--teal)}
+/* radial map */
+.map{position:relative;aspect-ratio:1;max-width:740px;margin:auto;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.map svg.l{position:absolute;inset:0;width:100%;height:100%;stroke-width:.5}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:26%;aspect-ratio:1;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 0 8px var(--tealbg),0 8px 20px #0f766e44;font-size:clamp(12px,2.6vw,19px)}
+.nd{position:absolute;transform:translate(-50%,-50%)}
+.nd>button.o{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0}
+.ic{position:relative;width:clamp(48px,11vw,80px);aspect-ratio:1;border-radius:50%;background:var(--c,var(--ic));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px var(--card),0 4px 10px #0003;transition:transform .15s,background .15s}
+.nd:hover .ic{transform:scale(1.1);filter:brightness(1.2)}
+.lb{background:var(--card);border-radius:99px;padding:1px 10px;font-size:clamp(11px,1.6vw,14px);font-weight:600;color:var(--ink);box-shadow:0 0 0 1px var(--line);max-width:130px;line-height:1.3}
+.bd{position:absolute;left:-4px;top:-4px;min-width:20px;height:20px;border-radius:10px;background:#f59e0b;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
+.nd .x{top:0;right:-6px;transform:none;width:24px;height:24px;background:var(--card);box-shadow:0 0 0 1px var(--line)}
+@media(hover:hover){.nd .x{opacity:0}.nd:hover .x,.nd .x:focus{opacity:1}}
+/* dialog */
+dialog{background:var(--card);color:var(--tx);border:0;border-radius:16px;padding:0;width:min(30rem,calc(100vw - 32px));box-shadow:0 20px 50px #0004}
+dialog::backdrop{background:#0f172a66}
+dialog form{padding:22px}dialog h2{margin-bottom:14px}
+.alert{background:var(--redbg);color:var(--redtx);border-radius:12px;padding:14px;margin-bottom:16px}
+
+input[type=checkbox]{width:18px;height:18px;padding:0;accent-color:var(--teal);flex:none}
+.dt{width:auto}
+.trow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.trow:last-child{border:0}.trow .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.lnk{flex:1;text-align:left;background:none;border:0;padding:0;color:inherit;min-width:0}
+.tag{font-size:.75rem;border-radius:99px;padding:1px 9px;background:var(--bg);color:var(--mut);white-space:nowrap}.tag.od{background:var(--redbg);color:var(--red)}.tag.td{background:var(--warnbg);color:var(--warntx)}
+.pinned{color:#f59e0b!important}.pinned svg{fill:#f59e0b}
+.fab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;background:var(--teal);color:#fff;border:0;font-size:30px;line-height:1;box-shadow:0 6px 18px #0004;z-index:6}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:10px 16px;border-radius:12px;z-index:20;box-shadow:0 8px 24px #0004;display:flex;gap:14px;align-items:center;max-width:calc(100vw - 32px)}.toast button{background:none;border:0;color:inherit;font-weight:700;text-decoration:underline}
+.fold{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;color:inherit}
+.fold svg{transition:transform .15s;color:var(--mut)}.fold[aria-expanded=true] svg{transform:rotate(90deg)}
+.nh{display:flex;gap:6px;align-items:flex-start;background:none;border:0;padding:0;text-align:left;flex:1;min-width:0;color:inherit}
+.nh>span:last-child{min-width:0;flex:1;display:block}.nh .chv{margin-top:3px;color:var(--mut);transition:transform .15s}.nh[aria-expanded=true] .chv{transform:rotate(90deg)}
+.pv{display:block;color:var(--mut);font-size:.8125rem;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note.c{padding:12px 16px}
+.sws{display:flex;gap:8px;flex-wrap:wrap}.sws label{margin:0}.sws input{position:absolute;opacity:0;width:0;height:0;padding:0;border:0;margin:0}
+.sws span{display:block;width:28px;height:28px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1px var(--bd2);cursor:pointer}
+.sws input:checked+span{box-shadow:0 0 0 2px var(--ink)}.sws input:focus-visible+span{outline:2px solid var(--teal);outline-offset:3px}
+.card.over,.nd.over{outline:2px dashed var(--teal);outline-offset:3px}.dragging{opacity:.45}
+mark{background:#fde68a;color:#0f172a;border-radius:3px;padding:0 1px}
+#res .tag{margin-right:6px}#res .sn{display:block;margin-top:2px}
+kbd{border:1px solid var(--bd2);border-bottom-width:2px;border-radius:5px;padding:0 6px;font:inherit;font-size:.8125rem;background:var(--bg);color:var(--ink)}
+.kb{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin-bottom:16px;align-items:center}
+[hidden]{display:none!important}
+a{color:var(--teal);overflow-wrap:anywhere}html[data-theme=dark] a{color:#5eead4}
+#alerts{position:fixed;top:70px;right:16px;z-index:30;display:grid;gap:10px;width:min(340px,calc(100vw - 32px))}
+.ralert{background:var(--card);color:var(--tx);border:1px solid var(--bd2);border-left:5px solid #f59e0b;border-radius:12px;padding:12px 14px;box-shadow:0 10px 30px #0004;animation:pop .2s}
+.ralert .row{margin-top:10px}@keyframes pop{from{transform:translateY(-8px);opacity:0}}
+#rem section{margin-top:0}
+html{-webkit-text-size-adjust:100%}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+header{padding-top:env(safe-area-inset-top)}
+button,a,input,select,textarea{touch-action:manipulation}
+.menu-btn{display:none}
+@media(max-width:640px){
+ .hin{padding:8px 12px;gap:8px}.brand{margin-right:auto}
+ .sw{order:3;flex:1 1 100%;max-width:none;margin-left:0}
+ .menu-btn{display:inline-flex}.tools{display:none;order:4;flex:1 1 100%}.tools.open{display:flex}
+ main{padding:16px 12px calc(96px + env(safe-area-inset-bottom))}
+ h1{font-size:1.3rem}.grid{grid-template-columns:1fr}
+ #alerts{top:8px;left:8px;right:8px;width:auto}
+ .fab{right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}
+ .toast{bottom:calc(88px + env(safe-area-inset-bottom))}
+ .bar{align-items:center}
+}
+@media(pointer:coarse){
+ .btn{min-height:44px}.btn.sm{min-height:40px}
+ .x{width:40px;height:40px}.cm{padding-right:56px}
+ input[type=checkbox]{width:24px;height:24px}
+ input,textarea,select{font-size:16px}
+ .trow{padding:12px 0}.seg button{padding:8px 14px}
+}
+.fab:hover{filter:brightness(1.1)}
+@media print{header,.fab,.noprint,.btn,.x,.crumbs,#res{display:none!important}
+html[data-theme=dark]{--ink:#0f172a;--mut:#475569;--line:#e2e8f0;--bd2:#cbd5e1;--card:#fff;--bg:#fff;--tx:#1e293b;--tealbg:#f0fdfa;--outtx:#134e4a;--warnbg:#fffbeb;--warntx:#78350f}
+body{background:#fff}main{max-width:none;padding:0}.panel,.note,.card{break-inside:avoid}.th{width:140px;height:140px}.fold svg,.nh .chv{display:none}}
+</style>
+</head>
+<body>
+<header><div class="hin">
+  <button class="brand" data-act="home"><span class="logo" id="logo"></span><span>Work Brain<br><small style="font-weight:400">Admissions &amp; Records</small></span></button>
+  <div class="sw"><input id="q" type="search" placeholder="Search everything  ( / )" autocomplete="off"><div id="res"></div></div>
+  <button class="btn ghost sm" id="remBtn" data-act="rem" title="Reminders"></button><button class="btn ghost sm menu-btn" data-act="menu" aria-label="More options">More</button><div class="row tools"><button class="btn ghost sm" data-act="help" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">?</button><button class="btn ghost sm" id="themeBtn" data-act="theme"></button><button class="btn ghost sm" data-act="big" title="Larger text" aria-label="Toggle larger text">A+</button><button class="btn ghost sm" id="diskBtn" data-act="disk" hidden></button><button class="btn ghost sm" data-act="export">Export backup</button><button class="btn ghost sm" data-act="import">Import</button></div>
+</div></header>
+<main id="app"></main>
+<button class="fab noprint" data-act="capture" aria-label="Quick capture" title="Quick capture (n)">+</button>
+<div id="alerts" class="noprint" aria-live="assertive"></div>
+<dialog id="dlg"></dialog>
+<input type="file" id="file" accept=".json,application/json" hidden>
+<input type="file" id="imgs" accept="image/*" multiple hidden>
+
+<script>
+const KEY="work-brain-v1";
+const P={share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',bell:'<path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 004 0"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',print:'<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/>',reset:'<path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8M3 3v5h5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a6 6 0 0112 0v1M17 4.5a3.5 3.5 0 010 7M22 21v-1a6 6 0 00-4-5.6"/>',
+file:'<path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h8"/>',
+archive:'<rect x="3" y="3" width="18" height="5" rx="1"/><path d="M5 8v11a2 2 0 002 2h10a2 2 0 002-2V8M10 12h4"/>',
+cap:'<path d="M22 10L12 5 2 10l10 5zM6 12v5c3 2 9 2 12 0v-5"/>',
+folder:'<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>',
+scale:'<path d="M12 3v18M5 21h14M5 7h14M5 7l-3 8a3 3 0 006 0zM19 7l-3 8a3 3 0 006 0z"/>',
+clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h6"/>',
+trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>',
+pen:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',
+chev:'<path d="M9 6l6 6-6 6"/>',net:'<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5l-6 5.5M12 11.5l6 5.5"/>'};
+const svg=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24">${P[n]}</svg>`;
+const CYC=["folder","clip","file","cap"];
+const mk=(id,t,icon)=>({id,title:t,notes:"",icon,children:[],cases:[]});
+const starter=()=>({branches:[mk("residency","Residency","pin"),mk("dual-enrollment","Dual Enrollment","users"),mk("sb554","SB554","file"),mk("academic-renewal","Academic Renewal","archive"),mk("ap","AP","cap"),mk("map","MAP","folder"),mk("subpoenas","Subpoenas","scale"),mk("transcripts","Transcripts","clip")]});
+
+let D,view=matchMedia("(max-width:640px)").matches?"list":"map",activeId=null,caseForm=null,undo=null,quiet=false;
+try{D=JSON.parse(localStorage.getItem(KEY))}catch{}
+if(!D||!Array.isArray(D.branches))D=starter();
+D.prefs??={theme:"auto",big:false};D.created??=Date.now();
+const save=()=>{if(!quiet)clearUndo(true);try{localStorage.setItem(KEY,JSON.stringify(D))}catch{alert("Couldn't save to this browser. Use Export backup to keep your data.")}diskSoon()};
+try{navigator.storage?.persist?.()}catch{}
+
+const $=s=>document.querySelector(s),app=$("#app"),dlg=$("#dlg");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LINK=/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)|(?:https?:\/\/|www\.)(?:(?!&(?:quot|#39|lt|gt);)[^\s<])+/gi;
+const linkify=t=>esc(t).replace(LINK,(m,lab,url)=>{
+  if(lab)return `<a href="${url}" target="_blank" rel="noopener noreferrer">${lab}</a>`;
+  const tail=(m.match(/[.,;:!?)\]]+$/)||[""])[0],u=tail?m.slice(0,-tail.length):m;
+  return `<a href="${u.startsWith("www.")?"https://"+u:u}" target="_blank" rel="noopener noreferrer">${u}</a>${tail}`;
+});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const pl=(n,w)=>`${n} ${w}${n==1?"":"s"}`;
+const sub=n=>n==1?"1 sub-branch":`${n} sub-branches`;
+const find=(a,id)=>{for(const n of a){if(n.id==id)return n;const f=find(n.children,id);if(f)return f}return null};
+const pathTo=(a,id,p=[])=>{for(const n of a){const q=[...p,n];if(n.id==id)return q;const f=pathTo(n.children,id,q);if(f.length)return f}return[]};
+const strip=(a,id)=>a.filter(n=>n.id!=id).forEach(n=>n.children=strip(n.children,id))||a.filter(n=>n.id!=id);
+const remove=id=>{const rec=a=>a.filter(n=>n.id!=id).map(n=>({...n,children:rec(n.children)}));D.branches=rec(D.branches)};
+const cnt=n=>n.cases.length+n.children.reduce((s,c)=>s+cnt(c),0);
+const flat=(a,anc=[])=>a.flatMap(n=>{const p=[...anc,n.title];return[{n,p},...flat(n.children,p)]});
+const icon=n=>n.icon&&P[n.icon]?n.icon:"folder";
+$("#logo").innerHTML=svg("net",20);
+
+/* image storage (IndexedDB, blobs stay out of localStorage) */
+const DB=new Promise((res,rej)=>{const r=indexedDB.open("work-brain-img",1);r.onupgradeneeded=()=>r.result.createObjectStore("i");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const idb=(mode,fn)=>DB.then(db=>new Promise((res,rej)=>{const t=db.transaction("i",mode);const r=fn(t.objectStore("i"));t.oncomplete=()=>res(r.result);t.onerror=()=>rej(t.error)}));
+const putImg=(id,b)=>idb("readwrite",s=>s.put(b,id)),getImg=id=>idb("readonly",s=>s.get(id)),delImg=id=>idb("readwrite",s=>s.delete(id)).catch(()=>{});
+const imgsOf=n=>[...n.cases.flatMap(c=>c.images||[]),...n.children.flatMap(imgsOf)];
+const allImgIds=()=>D.branches.flatMap(imgsOf);
+async function shrink(file){
+  const bmp=await createImageBitmap(file),k=Math.min(1,1600/Math.max(bmp.width,bmp.height));
+  const c=document.createElement("canvas");c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
+  const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);bmp.close?.();
+  return new Promise(r=>c.toBlob(r,"image/jpeg",.82));
+}
+const b2d=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+const d2b=u=>{const[h,b]=u.split(","),m=h.match(/:(.*?);/)[1],s=atob(b),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return new Blob([a],{type:m})};
+let urls=[];
+function hydrate(){document.querySelectorAll("img[data-img]").forEach(async im=>{try{const b=await getImg(im.dataset.img);if(b&&im.isConnected){const u=URL.createObjectURL(b);urls.push(u);im.src=u}}catch{}})}
+const syncForm=()=>{if(caseForm&&$("#ct")){caseForm.title=$("#ct").value;caseForm.details=$("#cd").value;caseForm.outcome=$("#co").value}};
+const dropForm=()=>{caseForm?.added.forEach(delImg);caseForm=null};
+async function addImages(files){
+  if(!caseForm)return;syncForm();
+  for(const f of files){try{const id=uid();await putImg(id,await shrink(f));caseForm.images.push(id);caseForm.added.push(id)}catch{alert("Couldn't add one of the images.")}}
+  render();
+}
+
+function card(n){return `<div class="card" draggable="true" data-drag="${n.id}"><button class="cm" data-act="open" data-id="${n.id}"><span class="tile" style="${cs(n)}">${svg(icon(n),22)}</span><span style="min-width:0"><h3>${esc(n.title)}</h3><small>${sub(n.children.length)} · ${pl(cnt(n),"note")}${ot(n)?` · ${ot(n)} open`:""}</small>${n.notes?`<br><small>${esc(n.notes.slice(0,70))}</small>`:""}</span></button><button class="x" data-act="del" data-id="${n.id}" aria-label="Remove ${esc(n.title)}" title="Remove">${svg("trash",15)}</button></div>`}
+
+function mapView(){
+  const a=D.branches,n=a.length;
+  const pos=a.map((_,i)=>{const t=(-90+i*360/n)*Math.PI/180;return[50+Math.cos(t)*36,50+Math.sin(t)*36]});
+  return `<div class="map"><svg class="l" viewBox="0 0 100 100" aria-hidden="true" style="color:var(--bd2)"><circle cx="50" cy="50" r="36" stroke-dasharray="1 1.5" style="stroke-width:.3"/>${pos.map(p=>`<line x1="50" y1="50" x2="${p[0]}" y2="${p[1]}"/>`).join("")}</svg><div class="hub">Work Brain</div>${a.map((b,i)=>`<div class="nd" draggable="true" data-drag="${b.id}" style="left:${pos[i][0]}%;top:${pos[i][1]}%"><button class="o" data-act="open" data-id="${b.id}"><span class="ic" style="${cs(b)}">${svg(icon(b),30)}${b.children.length?`<span class="bd">${b.children.length}</span>`:""}</span><span class="lb">${esc(b.title)}</span></button><button class="x" data-act="del" data-id="${b.id}" aria-label="Remove ${esc(b.title)}" title="Remove">${svg("trash",12)}</button></div>`).join("")}</div>`;
+}
+
+let logAll=false,printing=false,dragId=null;const openNotes=new Set();
+const untitled=(text,title)=>({id:uid(),title:title||"Untitled branch",notes:text,icon:"folder",children:[],cases:[],tasks:[]});
+const migrate=()=>{if(D.inbox?.length){D.inbox.forEach(i=>D.branches.push(untitled(i.text)));save()}delete D.inbox};
+function toast(msg,id,label="Open",act="open"){document.querySelector(".toast")?.remove();const d=document.createElement("div");d.className="toast noprint"+(act=="undo"?" u":"");d.innerHTML=esc(msg)+((id||act=="undo")?` <button data-act="${act}" data-id="${id}">${label}</button>`:"");document.body.append(d);if(act!="undo")setTimeout(()=>d.remove(),6000)}
+const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const fmt=d=>new Date(d+"T00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+const daysTo=d=>Math.round((new Date(d+"T00:00")-new Date(today()+"T00:00"))/864e5);
+const cur=()=>find(D.branches,activeId);
+const norm=a=>a.forEach(n=>{n.tasks??=[];delete n.lists;n.cases??=[];n.children??=[];norm(n.children)});
+const ot=n=>n.tasks.filter(t=>!t.done).length+n.children.reduce((x,c)=>x+ot(c),0);
+const touch=()=>{syncForm();save();render()};
+const findTask=id=>{for(const{n}of flat(D.branches)){const t=n.tasks.find(t=>t.id==id);if(t)return t}};
+const owner=id=>flat(D.branches).map(x=>x.n).find(n=>n.tasks.some(t=>t.id==id));
+const allTasks=()=>flat(D.branches).flatMap(({n,p})=>n.tasks.map(t=>({...t,nid:n.id,path:p.join(" › ")})));
+const backupDue=()=>{if(disk.state=="ok")return false;const now=Date.now();return now-(D.lastBackup||D.created)>12096e5&&now-(D.snooze||0)>2592e5};
+function applyPrefs(){
+  const t=D.prefs.theme,dark=t=="dark"||(t=="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme=dark?"dark":"light";
+  document.documentElement.style.fontSize=D.prefs.big?"112.5%":"";
+  $("#themeBtn").innerHTML=svg(dark?"moon":"sun",15)+" "+t[0].toUpperCase()+t.slice(1);
+}
+const dueTag=d=>{const k=daysTo(d);return `<span class="tag ${k<0?"od":k==0?"td":""}">${k<0?"Overdue · "+fmt(d):k==0?"Today":k==1?"Tomorrow":fmt(d)}</span>`};
+const xb=(act,id,label,extra="")=>`<button class="x" style="position:static;transform:none" data-act="${act}" data-id="${id}" ${extra} aria-label="${label}" title="${label}">${svg(act=="task-done"?"reset":"trash",14)}</button>`;
+
+const COLORS=[["","#0f766e","Default"],["blue","#2563eb","Blue"],["violet","#7c3aed","Violet"],["rose","#e11d48","Rose"],["orange","#ea580c","Orange"],["amber","#d97706","Amber"],["green","#16a34a","Green"],["slate","#475569","Slate"]];
+const CMAP=Object.fromEntries(COLORS.filter(x=>x[0]).map(x=>[x[0],x[1]]));
+const cs=n=>CMAP[n.color]?`--c:${CMAP[n.color]}`:"";
+/* undo */
+function clearUndo(commit){if(!undo)return;clearTimeout(undo.t);if(commit)undo.imgs.forEach(delImg);undo=null;document.querySelector(".toast.u")?.remove()}
+function withUndo(msg,fn,imgs=[]){syncForm();clearUndo(true);const snap=JSON.stringify(D);quiet=true;try{fn();save()}finally{quiet=false}render();undo={snap,imgs,t:setTimeout(()=>clearUndo(true),8000)};toast(msg,"","Undo","undo")}
+const savePref=()=>{quiet=true;save();quiet=false};
+/* ordering */
+const siblings=id=>{const p=pathTo(D.branches,id);return p.length>1?p[p.length-2].children:D.branches};
+function moveTo(id,tid){const a=siblings(id);if(id==tid||a!==siblings(tid))return;const i=a.findIndex(n=>n.id==id),j=a.findIndex(n=>n.id==tid),[x]=a.splice(i,1);a.splice(j,0,x);touch()}
+/* collapsible sections */
+function fold(k,title,extra,body,count,force){
+  const o=printing||force||!(D.prefs.fold||{})[k];
+  return `<section><div class="bar" style="margin-bottom:${o?12:0}px"><button class="fold" data-act="fold" data-k="${k}" aria-expanded="${o}">${svg("chev",16)}<h2>${title}</h2>${count?`<span class="tag">${count}</span>`:""}</button>${extra||""}</div>${o?body:""}</section>`;
+}
+const nb=(act,id,label,ic,cls="")=>`<button class="x ${cls}" style="position:static;transform:none" data-act="${act}" data-id="${id}" aria-label="${label}" title="${label}">${svg(ic,15)}</button>`;
+const noteCard=c=>{const o=printing||openNotes.has(c.id),imgs=c.images||[],prev=(c.details||c.outcome||"").replace(/\s+/g," ").slice(0,120);
+  return `<article class="note ${o?"":"c"}"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><button class="nh" data-act="note-open" data-id="${c.id}" aria-expanded="${o}"><span class="chv">${svg("chev",14)}</span><span><h3>${esc(c.title)}</h3><small>Added ${esc(c.created)}${imgs.length?` · ${pl(imgs.length,"image")}`:""}${c.outcome?" · has outcome":""}</small>${o||!prev?"":`<span class="pv">${esc(prev)}</span>`}</span></button><div class="row" style="gap:2px;flex-wrap:nowrap">${nb("pin",c.id,c.pinned?"Unpin note":"Pin to top","star",c.pinned?"pinned":"")}${nb("note-share",c.id,"Share note","share")}${nb("note-edit",c.id,"Edit note","pen")}${nb("note-del",c.id,"Delete note","trash")}</div></div>${o?`${c.details?`<p class="pre" style="margin-top:10px">${linkify(c.details)}</p>`:""}${c.outcome?`<div class="out"><b>Outcome: </b>${linkify(c.outcome)}</div>`:""}${imgs.length?`<div class="thumbs">${imgs.map(i=>`<button class="th" data-act="zoom" aria-label="View image"><img data-img="${i}" alt="Attachment"></button>`).join("")}</div>`:""}`:""}</article>`};
+const subSec=n=>fold("sub","Sub-branches",`<button class="btn" data-act="add">+ Add sub-branch</button>`,`${n.children.length?`<div class="grid">${n.children.map(card).join("")}</div>`:`<div class="empty">No sub-branches yet. Add one to break ${esc(n.title)} into smaller topics.</div>`}`,n.children.length);
+const notesSec=n=>fold("notes","Case notes",caseForm?"":`<button class="btn" data-act="note-new">+ Add note</button>`,`<div class="warn">Keep notes and images anonymous. Don’t include student names, IDs, birth dates, tax documents, or immigration records.</div>
+  ${caseForm?`<div class="note" style="border-color:#0f766e55"><h3 style="margin-bottom:12px">${caseForm.id?"Edit note":"New note"}</h3><label>Title<input id="ct" value="${esc(caseForm.title)}" placeholder="Example: Parent tax return scenario"></label><label>Situation and steps<textarea id="cd" rows="5" placeholder="What happened, and what did you do?">${esc(caseForm.details)}</textarea></label><label>Outcome or lesson (optional)<textarea id="co" rows="3" placeholder="Resolution, escalation, or what to do next time.">${esc(caseForm.outcome)}</textarea></label><div style="margin-bottom:14px"><b style="font-size:14px">Images (optional)</b><div class="thumbs">${caseForm.images.map(i=>`<div class="th"><img data-img="${i}" alt="Attachment"><button class="rm" data-act="img-rm" data-id="${i}" aria-label="Remove image">${svg("trash",12)}</button></div>`).join("")}<button class="th add" data-act="pick-img" aria-label="Add images">+</button></div><small>Click +, or paste a screenshot with Ctrl+V. Images are shrunk to save space.</small></div><div class="row end"><button class="btn ghost" data-act="note-cancel">Cancel</button><button class="btn" data-act="note-save">${caseForm.id?"Save changes":"Save note"}</button></div></div>`:""}
+  ${[...n.cases].sort((a,b)=>!!b.pinned-!!a.pinned).map(noteCard).join("")}
+  ${!n.cases.length&&!caseForm?`<div class="empty">No case notes for ${esc(n.title)} yet. Add one to record how a situation was handled.</div>`:""}`,n.cases.length,!!caseForm);
+const todoSec=n=>{const open=n.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||"9")<(b.due||"9")?-1:1);
+  return fold("todo","To-do","",`<div class="row noprint" style="margin:10px 0"><input id="tt" placeholder="Add a task or reminder" style="flex:1 1 220px;width:auto" data-enter="task-add"><input id="td" type="date" class="dt" aria-label="Due date (optional)"><button class="btn" data-act="task-add">Add</button></div>${open.length?`<div class="panel" style="padding:6px 14px">${open.map(t=>`<div class="trow"><input type="checkbox" data-act="task-done" data-id="${t.id}" aria-label="Mark done"><span class="tx">${linkify(t.text)}</span>${t.due?dueTag(t.due):""}${xb("task-del",t.id,"Delete task")}</div>`).join("")}</div>`:`<div class="empty">Nothing open. Add a task or reminder above.</div>`}`,open.length)};
+const logSec=n=>{const done=n.tasks.filter(t=>t.done).sort((a,b)=>a.doneAt<b.doneAt?1:-1),shown=logAll?done:done.slice(0,15);
+  return fold("log","Completed log","",`<p class="mut" style="font-size:.8125rem">A dated record of finished work. Checking off a to-do adds it here automatically.</p><div class="row noprint" style="margin:10px 0"><input id="lt" placeholder="What did you complete?" style="flex:1 1 220px;width:auto" data-enter="log-add"><input id="ld" type="date" class="dt" value="${today()}" aria-label="Date completed"><button class="btn" data-act="log-add">Log it</button></div>${done.length?`<div class="panel" style="padding:6px 14px">${shown.map(t=>`<div class="trow"><span class="tag">${fmt(t.doneAt)}</span><span class="tx">${linkify(t.text)}</span>${xb("task-done",t.id,"Move back to to-do")}${xb("task-del",t.id,"Delete entry")}</div>`).join("")}</div>${done.length>15?`<button class="btn ghost sm noprint" data-act="log-all" style="margin-top:10px">${logAll?"Show recent only":"Show all "+done.length}</button>`:""}`:`<div class="empty">Nothing logged yet.</div>`}`,done.length)};
+/* auto-save to a folder (File System Access API) */
+let dir=null,diskT=null,writing=false,again=false;const onDisk=new Set(),disk={state:"none",last:0,err:""};
+const clearImgs=async()=>{const ks=await idb("readonly",s=>s.getAllKeys());for(const k of ks)if(k!="__fh")await delImg(k)};
+const diskSoon=()=>{if(dir&&disk.state=="ok"){clearTimeout(diskT);diskT=setTimeout(writeDisk,1500)}};
+function updDisk(){
+  const b=$("#diskBtn");if(!b)return;b.hidden=!window.showDirectoryPicker;
+  const L={none:"Auto-save to folder",ok:disk.last?"Saved "+new Date(disk.last).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"Auto-save on",perm:"Reconnect folder",hold:"Review folder data",error:"Folder error"}[disk.state];
+  b.innerHTML=svg("folder",14)+" "+esc(L);b.title=disk.state=="error"?disk.err:"Automatically save your data to a folder on your computer";
+  b.style.color=disk.state=="ok"?"var(--teal)":disk.state=="none"?"":"var(--red)";
+}
+async function loadOnDisk(){onDisk.clear();try{const d=await dir.getDirectoryHandle("images");for await(const[n]of d.entries())onDisk.add(n.replace(/\.jpg$/,""))}catch{}}
+async function readDisk(){try{return JSON.parse(await(await(await dir.getFileHandle("work-brain-data.json")).getFile()).text())}catch{return null}}
+async function writeDisk(){
+  if(!dir||disk.state!="ok")return;
+  if(writing){again=true;return}
+  writing=true;
+  try{
+    const want=new Set(allImgIds());
+    if(want.size||onDisk.size){
+      const idir=await dir.getDirectoryHandle("images",{create:true});
+      for(const id of want)if(!onDisk.has(id)){const b=await getImg(id);if(b){const w=await(await idir.getFileHandle(id+".jpg",{create:true})).createWritable();await w.write(b);await w.close();onDisk.add(id)}}
+      for(const id of[...onDisk])if(!want.has(id)){await idir.removeEntry(id+".jpg").catch(()=>{});onDisk.delete(id)}
+    }
+    const stamp=Date.now();D.diskStamp=stamp;
+    const w=await(await dir.getFileHandle("work-brain-data.json",{create:true})).createWritable();await w.write(JSON.stringify({...D,_savedAt:stamp}));await w.close();
+    disk.last=stamp;disk.err="";try{localStorage.setItem(KEY,JSON.stringify(D))}catch{}
+  }catch(e){disk.state=(e?.name=="NotAllowedError"||e?.name=="SecurityError")?"perm":"error";disk.err=e?.message||"Couldn’t write to the folder."}
+  writing=false;updDisk();if(again){again=false;diskSoon()}
+}
+async function loadFromDisk(j){
+  try{const idir=await dir.getDirectoryHandle("images");for await(const[n,h]of idir.entries()){const id=n.replace(/\.jpg$/,"");if(h.kind=="file"&&!(await getImg(id)))await putImg(id,await h.getFile())}}catch{}
+  const stamp=j._savedAt;delete j._savedAt;D=j;D.diskStamp=stamp;D.prefs??={theme:"auto",big:false};D.created??=Date.now();
+  migrate();norm(D.branches);applyPrefs();activeId=null;caseForm=null;
+  disk.state="ok";disk.last=stamp;try{localStorage.setItem(KEY,JSON.stringify(D))}catch{}
+  await loadOnDisk();render();updDisk();
+}
+function resolveDisk(j,msg){
+  disk.state="hold";updDisk();render();
+  ask(`<h2>Which copy do you want to keep?</h2><p class="mut" style="margin-bottom:14px">${esc(msg)}<br>The folder copy was saved ${esc(new Date(j._savedAt||0).toLocaleString())}.</p><div class="row end"><button value="keep" class="btn ghost">Keep this browser’s data</button><button value="load" class="btn">Use the folder’s data</button></div>`,(f,v)=>{if(v=="load")loadFromDisk(j);else{disk.state="ok";writeDisk().then(render)}});
+}
+async function pickFolder(){
+  let h;try{h=await showDirectoryPicker({id:"workbrain",mode:"readwrite"})}catch{return}
+  dir=h;try{await idb("readwrite",s=>s.put(h,"__fh"))}catch{}
+  await loadOnDisk();const j=await readDisk();
+  if(!j){disk.state="ok";await writeDisk();toast("Auto-save is on. Saving to “"+h.name+"”.","");return}
+  resolveDisk(j,"This folder already contains Work Brain data.");
+}
+async function checkDisk(){
+  const j=await readDisk();if(!j){await writeDisk();return}
+  if((j._savedAt||0)>(D.diskStamp||0)+2000)resolveDisk(j,"This folder has newer data than this browser. That can happen if you used Work Brain on another computer.");
+  else{disk.last=D.diskStamp||0;updDisk()}
+}
+async function initDisk(){
+  updDisk();if(!window.showDirectoryPicker)return;
+  try{
+    const h=await idb("readonly",s=>s.get("__fh"));if(!h)return;dir=h;
+    if(await h.queryPermission({mode:"readwrite"})!="granted"){disk.state="perm";updDisk();render();return}
+    disk.state="ok";await loadOnDisk();await checkDisk();
+  }catch{}
+  updDisk();
+}
+/* reminders */
+const REP={none:"",daily:"Daily",weekdays:"Weekdays",weekly:"Weekly"};
+const isoOf=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const addDays=(iso,n)=>{const d=new Date(iso+"T00:00");d.setDate(d.getDate()+n);return isoOf(d)};
+const dow=iso=>new Date(iso+"T00:00").getDay();
+const fmtT=m=>new Date("2000-01-01T"+m).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+const dueMs=r=>new Date(r.date+"T"+r.time).getTime();
+function nextDate(r){const t=today();
+  if(r.repeat=="daily")return addDays(t,1);
+  if(r.repeat=="weekdays"){let d=addDays(t,1);while([0,6].includes(dow(d)))d=addDays(d,1);return d}
+  if(r.repeat=="weekly"){const w=dow(r.date);let d=addDays(t,1);while(dow(d)!=w)d=addDays(d,1);return d}
+  return r.date}
+const armAlert=r=>{r.snooze=0;r.alerted=(r.time&&dueMs(r)<=Date.now())?r.date+r.time:""};
+const remState=r=>{if(r.done)return"";const t=today();if(r.date<t)return"od";if(r.date==t)return(r.time&&dueMs(r)<=Date.now())?"od":"td";return""};
+const remTag=r=>{const k=daysTo(r.date),dl=k==0?"Today":k==1?"Tomorrow":k==-1?"Yesterday":fmt(r.date),st=remState(r);return `<span class="tag ${st}">${st=="od"?"Overdue · ":""}${dl}${r.time?" · "+fmtT(r.time):""}</span>`};
+function updBadge(){const n=(D.reminders||[]).filter(r=>remState(r)=="od").length,b=document.getElementById("remBtn");if(b)b.innerHTML=svg("bell",14)+" Reminders"+(n?` <span class="tag od">${n}</span>`:"")}
+function remSec(){
+  const rs=[...D.reminders].sort((a,b)=>(a.done-b.done)||((a.date+(a.time||"99"))<(b.date+(b.time||"99"))?-1:1));
+  const canN="Notification" in window,np=canN?Notification.permission:"";
+  const rows=rs.map(r=>`<div class="trow"><input type="checkbox" data-act="rem-toggle" data-id="${r.id}" ${r.done?"checked":""} aria-label="Mark done"><span class="tx" ${r.done?'style="text-decoration:line-through;opacity:.6"':""}>${linkify(r.text)}</span>${REP[r.repeat]?`<span class="tag">${REP[r.repeat]}</span>`:""}${remTag(r)}${nb("rem-edit",r.id,"Edit reminder","pen")}${nb("rem-del",r.id,"Delete reminder","trash")}</div>`).join("");
+  const body=`<div class="row noprint" style="margin:10px 0"><input id="rt" placeholder="Add a reminder (e.g. Send daily batch)" style="flex:1 1 220px;width:auto" data-enter="rem-add"><input id="rd" type="date" class="dt" value="${today()}" aria-label="Date"><input id="rtm" type="time" class="dt" aria-label="Time (optional, needed for an alert)"><select id="rr" class="dt" aria-label="Repeat"><option value="none">Once</option><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekly">Every week</option></select><button class="btn" data-act="rem-add">Add</button></div>${rs.length?`<div class="panel" style="padding:2px 14px">${rows}</div>`:`<div class="empty">No reminders yet. Add one above. Include a time to get an alert.</div>`}<div class="row noprint" style="margin-top:10px;font-size:.8125rem">${canN?(np=="granted"?`<span class="mut">Desktop notifications on</span>`:`<button class="btn ghost sm" data-act="rem-notify">Turn on desktop notifications</button>`):""}<label style="margin:0;font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" style="margin:0" data-act="rem-sound" ${D.prefs.sound===false?"":"checked"}> Play a sound</label>${rs.some(r=>r.done&&r.repeat=="none")?`<button class="btn ghost sm" data-act="rem-clear">Clear completed</button>`:""}</div><p class="mut" style="font-size:.75rem;margin-top:8px">Alerts appear while Work Brain is open in your browser. A background or minimized tab is fine.</p>`;
+  return `<div id="rem" style="margin-bottom:24px">${fold("rem","Reminders","",body,rs.filter(r=>!r.done).length)}</div>`;
+}
+let actx,titleT;
+function beep(){if(D.prefs.sound===false)return;try{actx??=new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime;o.connect(g);g.connect(actx.destination);o.frequency.value=880;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.6);o.start();o.stop(t+.65)}catch{}}
+function updTitle(){const n=document.querySelectorAll("#alerts .ralert").length;clearInterval(titleT);document.title="Work Brain";if(n){let on=false;titleT=setInterval(()=>{on=!on;document.title=on?`(${n}) Reminder due`:"Work Brain"},1000)}}
+function showAlert(r){const box=document.getElementById("alerts");if(box.querySelector(`[data-rid="${r.id}"]`))return;
+  const el=document.createElement("div");el.className="ralert";el.dataset.rid=r.id;
+  el.innerHTML=`<b>Reminder</b><div style="margin-top:2px;overflow-wrap:anywhere">${linkify(r.text)}</div><small>${esc(r.time?fmtT(r.time):"")}</small><div class="row"><button class="btn sm" data-act="ralert-done" data-id="${r.id}">Done</button><button class="btn ghost sm" data-act="ralert-snooze" data-id="${r.id}">Snooze 10 min</button><button class="btn ghost sm" data-act="ralert-dismiss" data-id="${r.id}">Dismiss</button></div>`;
+  box.append(el);updTitle()}
+function closeAlert(id){document.querySelector(`#alerts [data-rid="${id}"]`)?.remove();updTitle()}
+async function notify(r){try{if(!("Notification" in window)||Notification.permission!="granted")return;const o={body:r.text,tag:r.id,requireInteraction:true},reg=await navigator.serviceWorker?.getRegistration?.();if(reg?.showNotification){reg.showNotification("Reminder",o);return}const n=new Notification("Reminder",o);n.onclick=()=>{window.focus();n.close()}}catch{}}
+function tickReminders(first){
+  const now=Date.now(),t=today();let ch=false,fired=false;
+  for(const r of D.reminders||[]){
+    if(r.done&&r.repeat!="none"&&t>=r.date){r.done=false;ch=true}
+    if(r.done||!r.time||r.snooze>now||dueMs(r)>now)continue;
+    const key=r.date+r.time;
+    if(r.alerted!=key){r.alerted=key;ch=true;fired=true;showAlert(r);notify(r)}
+    else if(first){showAlert(r);fired=true}
+  }
+  if(fired)beep();
+  if(ch){savePref();const a=document.activeElement;if(!/^(INPUT|TEXTAREA|SELECT)$/.test(a?.tagName||"")&&!dlg.open)render();else updBadge()}else updBadge();
+}
+function initReminders(){tickReminders(true);setInterval(()=>tickReminders(),15000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tickReminders()})}
+function remDlg(r){
+  const sel=[["none","Once"],["daily","Every day"],["weekdays","Weekdays"],["weekly","Every week"]].map(([v,l])=>`<option value="${v}" ${r.repeat==v?"selected":""}>${l}</option>`).join("");
+  ask(`<h2>Edit reminder</h2><label>Reminder<input name="t" value="${esc(r.text)}" required autofocus></label><div class="row" style="margin-bottom:12px;flex-wrap:nowrap"><label style="flex:1;margin:0">Date<input name="d" type="date" value="${r.date}"></label><label style="flex:1;margin:0">Time (optional)<input name="m" type="time" value="${r.time||""}"></label></div><label>Repeat<select name="r">${sel}</select></label><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="ok" class="btn">Save</button></div>`,f=>{
+    const e=f.elements,t=e.t.value.trim();if(!t)return;
+    Object.assign(r,{text:t,date:e.d.value||today(),time:e.m.value,repeat:e.r.value,done:false,prev:""});armAlert(r);closeAlert(r.id);touch();
+  });
+}
+/* sharing */
+const b64=u=>{let t="";for(let i=0;i<u.length;i+=8192)t+=String.fromCharCode(...u.subarray(i,i+8192));return btoa(t)};
+const unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+async function toCode(o){
+  const raw=new TextEncoder().encode(JSON.stringify(o));
+  try{return "WBS1:"+b64(new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer()))}
+  catch{return "WBS0:"+b64(raw)}
+}
+async function fromCode(c){
+  const m=c.trim().match(/^WBS([01]):([A-Za-z0-9+\/=\s]+)$/);if(!m)throw 0;
+  let u=unb64(m[2].replace(/\s/g,""));
+  if(m[1]=="1")u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(u));
+}
+const slug=t=>(String(t||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40))||"share";
+function download(text,name){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"application/json"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const arr=a=>Array.isArray(a)?a:[];
+const noteOnly=c=>({title:c.title,details:c.details||"",outcome:c.outcome||"",images:[...arr(c.images)]});
+const cleanNode=n=>({title:n.title,notes:n.notes||"",color:n.color||"",icon:n.icon||"",cases:n.cases.map(noteOnly),children:n.children.map(cleanNode)});
+const idsIn=x=>x.cases?[...x.cases.flatMap(c=>c.images),...x.children.flatMap(idsIn)]:[...arr(x.images)];
+async function buildShare(kind,data,from,withImages){
+  const images={};
+  if(withImages)for(const id of new Set(idsIn(data))){try{const b=await getImg(id);if(b)images[id]=await b2d(b)}catch{}}
+  const strip=x=>{if(x.cases){x.cases.forEach(strip);x.children.forEach(strip)}else x.images=x.images.filter(i=>images[i])};strip(data);
+  return {wb_share:1,kind,from,when:new Date().toISOString(),data,images};
+}
+function shareDlg(kind,node,note){
+  const data=kind=="note"?noteOnly(note):cleanNode(node),nImg=idsIn(data).length,name=kind=="note"?note.title:node.title;
+  ask(`<h2>Share ${kind}</h2><p class="mut" style="margin-bottom:12px">${kind=="note"?`“${esc(name)}”`:`“${esc(name)}” with its sub-branches and notes`}. To-dos, reminders and your completed log are never included.</p><label>Your name (optional)<input name="f" placeholder="Shown to the person who imports it"></label>${nImg?`<label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" name="i" style="margin:0" checked> Include ${pl(nImg,"image")} (in the file only, not the code)</label>`:""}<div class="warn" style="margin:12px 0"><label style="margin:0;display:flex;gap:8px;font-weight:500;color:inherit"><input type="checkbox" name="ok" style="margin:3px 0 0" onchange="this.form.querySelectorAll('.need').forEach(b=>b.disabled=!this.checked)"> I’ve checked that this contains no student names, IDs, birth dates, tax or immigration records, or other protected information.</label></div><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="code" class="btn ghost need" disabled>Get code</button><button value="file" class="btn need" disabled>Save file</button></div>`,async(f,v)=>{
+    const e=f.elements,from=e.f.value.trim();
+    if(v=="file"){download(JSON.stringify(await buildShare(kind,data,from,!!e.i?.checked)),`workbrain-${slug(name)}.json`);toast("Share file saved. Send it to your coworker.","")}
+    else{const code=await toCode(await buildShare(kind,data,from,false));
+      ask(`<h2>Shareable code</h2><p class="mut" style="margin-bottom:10px">Paste this into an email or chat. The other person chooses <b>Import</b> and pastes it. Images are not included in codes (${Math.ceil(code.length/1024)} KB).</p><textarea readonly rows="5" id="codeBox" onclick="this.select()">${esc(code)}</textarea><div class="row end" style="margin-top:12px"><button value="cancel" class="btn ghost">Close</button><button type="button" class="btn" onclick="navigator.clipboard.writeText(document.getElementById('codeBox').value).then(()=>this.textContent='Copied')">Copy code</button></div>`,()=>{})}
+  });
+}
+async function importShared(j){
+  if(!j||j.wb_share!=1||!j.data||typeof j.data!="object"){alert("That doesn’t look like a Work Brain share.");return}
+  const kind=j.kind=="branch"?"branch":"note",d=j.data,title=String(d.title||"Untitled");
+  const cn=n=>arr(n.cases).length+arr(n.children).reduce((x,c)=>x+cn(c),0),cb=n=>1+arr(n.children).reduce((x,c)=>x+cb(c),0);
+  const nImg=Object.keys(j.images||{}).length;
+  const opts=flat(D.branches).map(({n,p})=>`<option value="${n.id}">${esc(p.join(" › "))}</option>`).join("");
+  ask(`<h2>Add shared ${kind}</h2><p style="margin-bottom:12px"><b>${esc(title)}</b>${j.from?` · from ${esc(j.from)}`:""}<br><span class="mut">${kind=="note"?"1 note":pl(cn(d),"note")+" in "+pl(cb(d),"branch","es").replace("branchs","branches")}${nImg?", "+pl(nImg,"image"):""}</span></p><label>${kind=="note"?"Add it to":"Place it"}<select name="b"><option value="">${kind=="note"?"A new branch":"Top level"}</option>${opts}</select></label><p class="mut" style="margin-bottom:14px">This adds a separate copy. Changes you make won’t affect the sender’s version.</p><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="ok" class="btn">Add</button></div>`,async f=>{
+    const imgMap={};
+    for(const[id,u]of Object.entries(j.images||{})){if(!/^data:image\/(jpeg|png|webp|gif);base64,/.test(u))continue;const nid=uid();try{await putImg(nid,d2b(u));imgMap[id]=nid}catch{}}
+    const str=(x,m)=>String(x??"").slice(0,m);
+    const mkCase=c=>({id:uid(),title:str(c.title,200)||"Untitled note",details:str(c.details,50000),outcome:str(c.outcome,20000),images:arr(c.images).map(i=>imgMap[i]).filter(Boolean),created:new Date().toLocaleDateString()});
+    const mkNode=(x,depth=0)=>({id:uid(),title:str(x.title,200)||"Untitled branch",notes:str(x.notes,20000),color:CMAP[x.color]?x.color:"",icon:P[x.icon]?x.icon:"folder",children:depth<8?arr(x.children).map(c=>mkNode(c,depth+1)):[],cases:arr(x.cases).map(mkCase),tasks:[]});
+    const b=f.elements.b.value;let target;
+    if(kind=="note"){
+      if(!b){target=mkNode({title:d.title,cases:[d]});D.branches.push(target)}
+      else{target=find(D.branches,b);target.cases.push(mkCase(d))}
+    }else{target=mkNode(d);(b?find(D.branches,b).children:D.branches).push(target)}
+    save();render();toast(`Added “${title}”.`,target.id);
+  });
+}
+function homeTop(){
+  let h="";
+  h+=remSec();
+  if(disk.state=="perm"||disk.state=="hold")h+=`<div class="warn row" style="justify-content:space-between;font-size:.8125rem;margin:0 0 20px"><span>${disk.state=="perm"?"Your auto-save folder needs permission again before saving can continue.":"Your auto-save folder has data that needs your decision before saving continues."}</span><button class="btn sm" data-act="disk">${disk.state=="perm"?"Reconnect":"Review"}</button></div>`;
+  if(backupDue())h+=`<div class="warn row" style="justify-content:space-between;font-size:.8125rem;margin:0 0 20px"><span>It’s been a while since your last backup. Export one so a cleared browser can’t erase your notes.</span><span class="row"><button class="btn sm" data-act="export">Export now</button><button class="btn ghost sm" data-act="snooze">Later</button></span></div>`;
+  const due=allTasks().filter(t=>!t.done&&t.due&&daysTo(t.due)<=7).sort((a,b)=>a.due<b.due?-1:1).slice(0,8);
+  if(due.length)h+=`<section style="margin:0 0 24px"><h2>Due soon</h2><div class="panel" style="padding:6px 14px;margin-top:8px">${due.map(t=>`<div class="trow"><input type="checkbox" data-act="task-done" data-id="${t.id}" aria-label="Mark done"><button class="lnk" data-act="open" data-id="${t.nid}"><span>${esc(t.text)}</span><br><small>${esc(t.path)}</small></button>${dueTag(t.due)}</div>`).join("")}</div></section>`;
+
+  return h;
+}
+function render(){
+  urls.forEach(u=>URL.revokeObjectURL(u));urls=[];norm(D.branches);D.reminders??=[];updBadge();
+  const n=activeId?find(D.branches,activeId):null;
+  if(activeId&&!n)activeId=null;
+  if(!n){
+    app.innerHTML=homeTop()+`<div class="bar"><div><h1>Topics</h1><p class="mut">Open a topic to see its sub-branches and case notes.</p></div><div class="row"><div class="seg"><button data-act="view" data-v="map" class="${view=="map"?"on":""}">Map</button><button data-act="view" data-v="list" class="${view=="list"?"on":""}">List</button></div><button class="btn" data-act="add">+ New topic</button></div></div>`+
+    (!D.branches.length?`<div class="empty">No topics yet. Add your first topic to get started.</div>`:view=="map"?mapView():`<div class="grid">${D.branches.map(card).join("")}</div>`);
+    return;
+  }
+  const path=pathTo(D.branches,n.id);
+  app.innerHTML=`<nav class="crumbs"><button data-act="home">Topics</button>${path.map((p,i)=>`${svg("chev",14)}<button data-act="open" data-id="${p.id}" class="${i==path.length-1?"cur":""}">${esc(p.title)}</button>`).join("")}</nav>
+  <div class="panel"><div class="row" style="align-items:flex-start;flex-wrap:nowrap"><span class="tile" style="width:56px;height:56px;${cs(n)}">${svg(icon(n),28)}</span><div style="flex:1;min-width:0"><h1>${esc(n.title)}</h1><p class="pre mut" style="font-size:14px;margin-top:4px">${n.notes?linkify(n.notes):"No description yet. Use Edit to add steps, reminders, or links."}</p></div></div>
+  <div class="row end noprint" style="margin-top:12px"><button class="btn ghost sm" data-act="share">${svg("share",14)} Share</button><button class="btn ghost sm" data-act="print">${svg("print",14)} Print</button><button class="btn ghost sm" data-act="edit">${svg("pen",14)} Edit</button><button class="btn danger sm" data-act="del" data-id="${n.id}">${svg("trash",14)} Remove</button></div></div>
+  ${subSec(n)}${todoSec(n)}${notesSec(n)}${logSec(n)}`;
+  if(caseForm)$("#ct")?.focus();
+  hydrate();
+}
+
+/* dialogs */
+function ask(html,onOk){
+  dlg.innerHTML=`<form method="dialog">${html}</form>`;dlg.style.width="";dlg.returnValue="";
+  dlg.onclose=()=>{const v=dlg.returnValue;if(v&&v!="cancel")onOk(dlg.querySelector("form"),v)};
+  dlg.showModal();
+}
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+function branchDlg(edit){
+  const cur=activeId?find(D.branches,activeId):null,n=edit?cur:null;
+  ask(`<h2>${edit?"Edit branch":cur?"Add sub-branch":"New topic"}</h2><label>Title<input name="t" value="${esc(n?.title=="Untitled branch"?"":n?.title)}" required autofocus placeholder="Example: Group A documents"></label><label>Description (optional)<textarea name="d" rows="5" placeholder="Steps, reminders, or official links. No student-identifying information.">${esc(n?.notes)}</textarea></label><div style="margin-bottom:14px"><b style="font-size:14px">Color</b><div class="sws" style="margin-top:6px">${COLORS.map(([k,c,l])=>`<label title="${l}"><input type="radio" name="c" value="${k}" ${(n?.color||"")==k?"checked":""}><span style="background:${c}"></span></label>`).join("")}</div></div><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="ok" class="btn">${edit?"Save changes":"Add branch"}</button></div>`,f=>{
+    const t=f.elements.t.value.trim(),d=f.elements.d.value.trim();if(!t)return;
+    const col=f.querySelector("[name=c]:checked")?.value||"";if(edit){n.title=t;n.notes=d;n.color=col}
+    else{const c={id:uid(),title:t,notes:d,color:col,icon:CYC[(cur?cur.children.length:0)%4],children:[],cases:[]};(cur?cur.children:D.branches).push(c);activeId=c.id}
+    save();render();
+  });
+}
+/* actions */
+const A={
+  home(){dropForm();activeId=null;render()},
+  open(id,t){document.querySelector(".toast:not(.u)")?.remove();dropForm();activeId=id;if(t?.dataset?.note){openNotes.add(t.dataset.note);if(D.prefs.fold)D.prefs.fold.notes=false}$("#q").value="";hideRes();render();scrollTo(0,0)},
+  view(_,t){view=t.dataset.v;render()},
+  add(){branchDlg(false)},edit(){branchDlg(true)},del(id){const n=find(D.branches,id);if(!n)return;const inPath=pathTo(D.branches,activeId).some(p=>p.id==id),parent=pathTo(D.branches,id).slice(-2,-1)[0];withUndo(`“${n.title}” removed.`,()=>{remove(id);if(inPath)activeId=parent?.id||null},imgsOf(n))},
+  async disk(){
+    if(!window.showDirectoryPicker){alert("Saving to a folder needs Chrome or Edge on a computer.");return}
+    if(!dir||disk.state=="none")return pickFolder();
+    if(disk.state=="perm"){try{if(await dir.requestPermission({mode:"readwrite"})=="granted"){disk.state="ok";await loadOnDisk();await checkDisk()}}catch{}updDisk();render();return}
+    if(disk.state=="hold"){const j=await readDisk();if(j)resolveDisk(j,"Choose which copy to keep.");else{disk.state="ok";writeDisk()}return}
+    ask(`<h2>Auto-save folder</h2><p style="margin-bottom:14px">Folder: <b>${esc(dir.name)}</b><br><span class="mut">${disk.last?"Last saved "+esc(new Date(disk.last).toLocaleString()):"Waiting for your first change."}</span>${disk.state=="error"?`<br><span style="color:var(--red)">${esc(disk.err)}</span>`:""}</p><div class="row end"><button value="cancel" class="btn ghost">Close</button><button value="off" class="btn danger">Turn off</button><button value="load" class="btn ghost">Load from folder</button><button value="save" class="btn">Save now</button></div>`,async(f,v)=>{
+      if(v=="save"){disk.state="ok";await writeDisk()}
+      else if(v=="load"){const j=await readDisk();if(!j){alert("No saved data found in that folder.");return}if(confirm("Replace what’s in this browser with the folder’s data?"))loadFromDisk(j)}
+      else if(v=="off"){dir=null;disk.state="none";onDisk.clear();try{await delImg("__fh")}catch{}updDisk();render()}
+    });
+  },
+  rem(){if(activeId)A.home();if(D.prefs.fold)D.prefs.fold.rem=false;render();setTimeout(()=>document.getElementById("rem")?.scrollIntoView?.({behavior:"smooth"}))},
+  "rem-add"(){const el=$("#rt"),text=el.value.trim();if(!text){el.focus();return}
+    const r={id:uid(),text,date:$("#rd").value||today(),time:$("#rtm").value,repeat:$("#rr").value,done:false,alerted:"",snooze:0};armAlert(r);D.reminders.push(r);touch();setTimeout(()=>$("#rt")?.focus())},
+  "rem-toggle"(id){const r=D.reminders.find(r=>r.id==id);if(!r)return;
+    if(!r.done){r.done=true;if(r.repeat!="none"){r.prev=r.date;r.date=nextDate(r);r.alerted=""}}
+    else{r.done=false;if(r.prev){r.date=r.prev;r.prev=""}armAlert(r)}
+    r.snooze=0;closeAlert(id);touch()},
+  "rem-edit"(id){const r=D.reminders.find(r=>r.id==id);if(r)remDlg(r)},
+  "rem-del"(id){closeAlert(id);withUndo("Reminder removed.",()=>{D.reminders=D.reminders.filter(r=>r.id!=id)})},
+  "rem-clear"(){withUndo("Cleared completed reminders.",()=>{D.reminders=D.reminders.filter(r=>!(r.done&&r.repeat=="none"))})},
+  "rem-sound"(){D.prefs.sound=D.prefs.sound===false;savePref();render()},
+  async "rem-notify"(){if(!("Notification" in window)){toast("This browser doesn’t support desktop notifications.","");return}
+    let p="denied";try{p=await Notification.requestPermission()}catch{}
+    toast(p=="granted"?"Desktop notifications are on.":"Desktop notifications are blocked here. You’ll still get in-app alerts and a sound.","");render()},
+  "ralert-done"(id){const r=D.reminders.find(r=>r.id==id);if(r&&!r.done)A["rem-toggle"](id);else closeAlert(id)},
+  "ralert-snooze"(id){const r=D.reminders.find(r=>r.id==id);if(r){r.snooze=Date.now()+10*60000;r.alerted="";savePref()}closeAlert(id);render()},
+  "ralert-dismiss"(id){closeAlert(id);updBadge()},
+  share(){shareDlg("branch",cur())},
+  "note-share"(id){const c=cur().cases.find(c=>c.id==id);if(c)shareDlg("note",cur(),c)},
+  import(){ask(`<h2>Import</h2><p class="mut" style="margin-bottom:12px">Open a shared note or branch from a coworker, or restore one of your own backups.</p><button type="button" class="btn ghost" onclick="document.getElementById('file').click();document.getElementById('dlg').close()">Choose a file…</button><label style="margin-top:16px">Or paste a shared code<textarea name="c" rows="3" placeholder="WBS1:…"></textarea></label><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="code" class="btn">Add from code</button></div>`,async f=>{
+    const c=f.elements.c.value.trim();if(!c)return;
+    try{await importShared(await fromCode(c))}catch{alert("That code isn’t valid. Copy the whole code, starting with WBS.")}})},
+  menu(){document.querySelector(".tools").classList.toggle("open")},
+  undo(){if(!undo)return;clearTimeout(undo.t);const sn=undo.snap;undo=null;document.querySelector(".toast.u")?.remove();D=JSON.parse(sn);applyPrefs();save();render()},
+  fold(_,t){const k=t.dataset.k;D.prefs.fold??={};D.prefs.fold[k]=!D.prefs.fold[k];syncForm();savePref();render()},
+  "note-open"(id){openNotes.has(id)?openNotes.delete(id):openNotes.add(id);syncForm();render()},
+  help(){dlg.innerHTML=`<form method="dialog"><h2>Keyboard shortcuts</h2><div class="kb"><span><kbd>/</kbd></span><span>Search everything</span><span><kbd>n</kbd></span><span>Quick capture</span><span><kbd>Esc</kbd></span><span>Go up one level (or clear search)</span><span><kbd>?</kbd></span><span>Show this list</span><span><kbd>Alt</kbd> + <kbd>←</kbd> <kbd>→</kbd></span><span>With a topic focused, move it earlier or later</span></div><p class="mut" style="margin-bottom:10px">You can also drag topic cards and map circles to reorder them.</p><p class="mut" style="margin-bottom:16px">Web addresses in notes, descriptions and to-dos become clickable links. For a named link, type [name](https://address).</p><div class="row end"><button class="btn">Close</button></div></form>`;dlg.style.width="";dlg.onclose=null;dlg.showModal()},
+  theme(){const o=["auto","light","dark"];D.prefs.theme=o[(o.indexOf(D.prefs.theme)+1)%3];savePref();applyPrefs()},
+  big(){D.prefs.big=!D.prefs.big;savePref();applyPrefs()},
+  print(){printing=true;render();setTimeout(()=>window.print(),400)},
+  snooze(){D.snooze=Date.now();save();render()},
+  pin(id){const c=cur().cases.find(c=>c.id==id);c.pinned=!c.pinned;touch()},
+  "task-add"(){const el=$("#tt"),v=el.value.trim();if(!v){el.focus();return}cur().tasks.push({id:uid(),text:v,due:$("#td").value,done:false,doneAt:""});touch();setTimeout(()=>$("#tt")?.focus())},
+  "task-done"(id){const t=findTask(id);t.done=!t.done;t.doneAt=t.done?today():"";touch()},
+  "task-del"(id){const n=owner(id);withUndo("Removed.",()=>{n.tasks=n.tasks.filter(t=>t.id!=id)})},
+  "log-add"(){const el=$("#lt"),v=el.value.trim();if(!v){el.focus();return}cur().tasks.push({id:uid(),text:v,due:"",done:true,doneAt:$("#ld").value||today()});touch();setTimeout(()=>$("#lt")?.focus())},
+  "log-all"(){logAll=!logAll;touch()},
+  capture(){
+    syncForm();
+    const opts=flat(D.branches).map(({n,p})=>`<option value="${n.id}">${esc(p.join(" › "))}</option>`).join("");
+    ask(`<h2>Quick capture</h2><label>Title <span style="font-weight:400;color:var(--mut)">(optional)</span><input name="h" autofocus placeholder="Name it now, or leave blank to name it later"></label><label>Your note<textarea name="t" rows="5"></textarea></label><label>Save to<select name="b"><option value="">New branch</option>${opts}</select></label><div class="row end"><button value="cancel" class="btn ghost" formnovalidate>Cancel</button><button value="ok" class="btn">Save</button></div>`,f=>{
+      const t=f.elements.t.value.trim(),h=f.elements.h.value.trim(),b=f.elements.b.value;if(!t&&!h)return;
+      if(!b){const c=untitled(t,h);D.branches.push(c);save();render();toast(h?"Saved as a new branch.":"Saved to a new untitled branch.",c.id)}
+      else{const n=find(D.branches,b);n.cases.push({id:uid(),title:h||t.split("\n")[0].slice(0,70),details:t,outcome:"",images:[],created:new Date().toLocaleDateString()});save();render();toast("Saved as a note in “"+n.title+"”.",n.id)}
+    });
+  },
+  zoom(_,t){const im=t.querySelector("img");if(!im?.src)return;dlg.innerHTML=`<form method="dialog" style="padding:10px;text-align:center"><img src="${im.src}" alt="" style="max-width:100%;max-height:78vh;border-radius:8px"><div class="row end" style="margin-top:8px"><button class="btn ghost sm">Close</button></div></form>`;dlg.style.width="min(900px,calc(100vw - 32px))";dlg.onclose=null;dlg.showModal()},
+  "pick-img"(){syncForm();$("#imgs").click()},
+  "img-rm"(id){syncForm();if(caseForm.added.includes(id)){delImg(id);caseForm.added=caseForm.added.filter(i=>i!=id)}else caseForm.removed.push(id);caseForm.images=caseForm.images.filter(i=>i!=id);render()},
+  "note-new"(){caseForm={title:"",details:"",outcome:"",images:[],added:[],removed:[]};render()},
+  "note-edit"(id){const c=find(D.branches,activeId).cases.find(c=>c.id==id);caseForm={...c,images:[...(c.images||[])],added:[],removed:[]};render()},
+  "note-cancel"(){dropForm();render()},
+  "note-save"(){
+    const title=$("#ct").value.trim();if(!title){$("#ct").focus();return}
+    const n=find(D.branches,activeId),item={id:caseForm.id||uid(),title,details:$("#cd").value.trim(),outcome:$("#co").value.trim(),created:caseForm.created||new Date().toLocaleDateString(),pinned:!!caseForm.pinned};
+    item.images=[...caseForm.images];caseForm.removed.forEach(delImg);n.cases=caseForm.id?n.cases.map(c=>c.id==item.id?item:c):[...n.cases,item];openNotes.add(item.id);caseForm=null;save();render();
+  },
+  "note-del"(id){const n=cur(),c=n.cases.find(c=>c.id==id);withUndo("Note deleted.",()=>{n.cases=n.cases.filter(c=>c.id!=id)},c.images||[])},
+  async export(){
+    D.lastBackup=Date.now();save();const images={};for(const id of allImgIds()){try{const b=await getImg(id);if(b)images[id]=await b2d(b)}catch{}}
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({...D,images})],{type:"application/json"}));
+    a.download=`work-brain-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  },
+};
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-act]");
+  if(t){if(t.dataset.act!="menu")document.querySelector(".tools")?.classList.remove("open");A[t.dataset.act]?.(t.dataset.id,t);return}
+  if(!e.target.closest(".sw"))hideRes();
+});
+$("#file").addEventListener("change",async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{
+    const j=JSON.parse(await f.text());if(j&&j.wb_share){await importShared(j);return}if(!Array.isArray(j.branches))throw 0;
+    if(!confirm("Replace everything currently stored with this backup?"))return;
+    await clearImgs();for(const[id,u]of Object.entries(j.images||{}))await putImg(id,d2b(u));delete j.images;D=j;migrate();D.prefs??={theme:"auto",big:false};D.created??=Date.now();applyPrefs();activeId=null;caseForm=null;save();render();
+  }catch{alert("That file isn't a valid Work Brain backup.")}
+});
+
+/* search */
+const hideRes=()=>{$("#res").style.display="none"};
+const hl=(t,q)=>{t=String(t??"");const l=t.toLowerCase();let o="",i=0,k;while((k=l.indexOf(q,i))>=0){o+=esc(t.slice(i,k))+"<mark>"+esc(t.slice(k,k+q.length))+"</mark>";i=k+q.length}return o+esc(t.slice(i))};
+const snip=(t,q)=>{t=t.replace(/\s+/g," ");const k=Math.max(0,t.toLowerCase().indexOf(q)-30);return(k>0?"…":"")+t.slice(k,k+90)+(t.length>k+90?"…":"")};
+function searchAll(q){
+  const out=[],has=x=>String(x||"").toLowerCase().includes(q);
+  for(const{n,p}of flat(D.branches)){
+    const path=p.join(" › "),up=p.slice(0,-1).join(" › ")||"Top level";
+    if(has(n.title)||has(n.notes))out.push({type:"Branch",rank:has(n.title)?0:1,id:n.id,title:n.title,path:up,sn:has(n.title)?"":n.notes});
+    for(const c of n.cases)if(has(c.title)||has(c.details)||has(c.outcome))out.push({type:"Note",rank:has(c.title)?2:3,id:n.id,note:c.id,title:c.title,path,sn:has(c.title)?"":(has(c.details)?c.details:c.outcome)});
+    for(const t of n.tasks)if(has(t.text))out.push({type:t.done?"Done":"To-do",rank:4,id:n.id,title:t.text,path,sn:""});
+  }
+  return out.sort((a,b)=>a.rank-b.rank).slice(0,40);
+}
+$("#q").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase(),r=$("#res");
+  if(!q){hideRes();return}
+  const hits=searchAll(q);
+  r.innerHTML=hits.length?hits.map(h=>`<button data-act="open" data-id="${h.id}"${h.note?` data-note="${h.note}"`:""}><span class="tag">${h.type}</span><b style="color:var(--ink)">${hl(h.title,q)}</b><br><small>${esc(h.path)}</small>${h.sn?`<small class="sn">${hl(snip(h.sn,q),q)}</small>`:""}</button>`).join(""):`<p class="mut" style="padding:14px;text-align:center">Nothing matches “${esc(e.target.value)}”.</p>`;
+  r.style.display="block";
+});
+$("#imgs").addEventListener("change",e=>{const f=[...e.target.files];e.target.value="";addImages(f)});
+document.addEventListener("paste",e=>{if(!caseForm)return;const f=[...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith("image/")).map(i=>i.getAsFile());if(f.length){e.preventDefault();addImages(f)}});
+document.addEventListener("keydown",e=>{const a=e.target.dataset?.enter;if(a&&e.key=="Enter"){e.preventDefault();A[a](e.target.dataset.id,e.target)}});
+document.addEventListener("dragstart",e=>{const el=e.target.closest?.("[data-drag]");if(!el)return;dragId=el.dataset.drag;e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",dragId);el.classList.add("dragging")});
+document.addEventListener("dragover",e=>{const t=dragId&&e.target.closest?.("[data-drag]");if(t&&t.dataset.drag!=dragId){e.preventDefault();document.querySelectorAll(".over").forEach(x=>x.classList.remove("over"));t.classList.add("over")}});
+document.addEventListener("drop",e=>{const t=dragId&&e.target.closest?.("[data-drag]");if(t){e.preventDefault();const id=dragId;dragId=null;moveTo(id,t.dataset.drag)}});
+document.addEventListener("dragend",()=>{dragId=null;document.querySelectorAll(".over,.dragging").forEach(x=>x.classList.remove("over","dragging"))});
+window.addEventListener("afterprint",()=>{if(printing){printing=false;render()}});
+document.addEventListener("keydown",e=>{
+  const el=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)||el.isContentEditable;
+  if(e.altKey&&e.key.startsWith("Arrow")&&el.dataset?.act=="open"){
+    e.preventDefault();const id=el.dataset.id,a=siblings(id),i=a.findIndex(n=>n.id==id),j=/Left|Up/.test(e.key)?i-1:i+1;
+    if(a[j]){moveTo(id,a[j].id);setTimeout(()=>document.querySelector(`[data-act="open"][data-id="${id}"]`)?.focus())}return;
+  }
+  if(e.key=="Escape"&&el.id=="q"){el.value="";hideRes();el.blur();return}
+  if(typing||dlg.open||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key=="/"){e.preventDefault();$("#q").focus()}
+  else if(e.key=="n"){e.preventDefault();A.capture()}
+  else if(e.key=="?")A.help();
+  else if(e.key=="Escape"&&activeId&&!caseForm){const p=pathTo(D.branches,activeId),par=p[p.length-2];par?A.open(par.id):A.home()}
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyPrefs);
+migrate();norm(D.branches);applyPrefs();
+window.addEventListener("storage",e=>{if(e.key!=KEY||!e.newValue)return;try{syncForm();clearUndo(true);D=JSON.parse(e.newValue);D.prefs??={theme:"auto",big:false};norm(D.branches);applyPrefs();render()}catch{}});
+render();initDisk();initReminders();
+if("serviceWorker" in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(()=>{});
+idb("readonly",s=>s.getAllKeys()).then(keys=>{const used=new Set(allImgIds());keys.filter(k=>k!="__fh"&&!used.has(k)).forEach(delImg)}).catch(()=>{});
+</script>
+</body>
+</html>
